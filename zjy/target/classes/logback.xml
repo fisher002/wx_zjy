@@ -21,8 +21,6 @@
 	<!-- trace是最详细的日志跟踪级别，可以输出完整的日志信息 -->
 	<!-- trace > debug > info > warn > error > off -->
 	<!-- 项目域名 -->
-=======
->>>>>>> branch 'master' of https://github.com/fisher002/weixin-kemao-601.git
 	<logger name="org.fisher" level="trace" />
 
 	<root level="error">
