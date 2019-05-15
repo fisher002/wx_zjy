@@ -1,0 +1,8 @@
+D:\JAVA\maven\wx_zjy\subscribe\src\main\java\org\fisher\weixin\SubscribeApplication.java
+D:\JAVA\maven\wx_zjy\subscribe\src\main\java\org\fisher\weixin\processor\impl\UnsubscribeEventMessageProcessor.java
+D:\JAVA\maven\wx_zjy\subscribe\src\main\java\org\fisher\weixin\service\impl\AccessTokenManagerSample.java
+D:\JAVA\maven\wx_zjy\subscribe\src\main\java\org\fisher\weixin\repository\UserRepository.java
+D:\JAVA\maven\wx_zjy\subscribe\src\main\java\org\fisher\weixin\service\AccessTokenManager.java
+D:\JAVA\maven\wx_zjy\subscribe\src\main\java\org\fisher\weixin\processor\EventMessageProcessor.java
+D:\JAVA\maven\wx_zjy\subscribe\src\main\java\org\fisher\weixin\processor\impl\SubscribeEventMessageProcessor.java
+D:\JAVA\maven\wx_zjy\subscribe\src\main\java\org\fisher\weixin\service\WeiXinProxy.java
