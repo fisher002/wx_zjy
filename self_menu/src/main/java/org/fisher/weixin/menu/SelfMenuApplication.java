@@ -13,5 +13,6 @@ public class SelfMenuApplication implements CommonsConfig {
 
 	public static void main(String[] args) {
 		SpringApplication.run(SelfMenuApplication.class, args);
+		
 	}
 }
