@@ -8,6 +8,7 @@ import java.net.http.HttpRequest.BodyPublishers;
 import java.net.http.HttpResponse;
 import java.net.http.HttpResponse.BodyHandlers;
 import java.nio.charset.Charset;
+import java.util.concurrent.CompletableFuture;
 
 import org.fisher.weixin.inmessage.User;
 import org.fisher.weixin.inmessage.text.TextOutMessage;
@@ -16,6 +17,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Service // 把当前类的对象加入Spring中管理
@@ -61,17 +63,31 @@ public class WeiXinProxy {
 		return null;
 	}
 
-	public void sendText(String account, String openId, String text) {
-		TextOutMessage out = new TextOutMessage(openId, text);
+		public void sendText(String account, String openId, String text) {
+			TextOutMessage out = new TextOutMessage(openId, text);
 
-		// 一般情况下是放入消息队列来发送的，但是这里为了简单起见，暂时不使用消息队列
-		try {
-			String json = this.objectMapper.writeValueAsString(out);
-			LOG.trace("客服接口要发送的消息内容：{}", json);
+			String url = "https://api.weixin.qq.com/cgi-bin/message/custom/send?access_token=";
+			try {
+				String json = this.objectMapper.writeValueAsString(out);
+				this.post(url, json);
+			} catch (JsonProcessingException e) {
+				LOG.error("发送消息出现问题：" + e.getLocalizedMessage(), e);
+			}
+	
+		}
 
-			String accessToken = accessTokenManager.getToken(account);
-			String url = "https://api.weixin.qq.com/cgi-bin/message/custom/send"//
-					+ "?access_token=" + accessToken;
+		public void createMenu(String json) {
+			String url = "https://api.weixin.qq.com/cgi-bin/menu/create?access_token=";
+			this.post(url, json);
+		}
+
+		private void post(String url, String json) {
+
+			LOG.trace("以POST方式发送信息给微信公众号，内容：\n{}", json);
+
+			// 如果没有加上访问令牌，无法访问微信的公众号服务器！
+			String accessToken = accessTokenManager.getToken(null);
+			url = url + accessToken;
 
 			// 创建请求
 			HttpRequest request = HttpRequest.newBuilder(URI.create(url))//
@@ -79,12 +95,13 @@ public class WeiXinProxy {
 					.POST(BodyPublishers.ofString(json, Charset.forName("UTF-8")))//
 					.build();
 
-			HttpResponse<String> response = httpClient//
-					.send(request, BodyHandlers.ofString(Charset.forName("UTF-8")));
-			LOG.trace("发送客服消息的结果：{}", response.body());
+			// 异步发送
+			CompletableFuture<HttpResponse<String>> future = httpClient.sendAsync(request,
+					BodyHandlers.ofString(Charset.forName("UTF-8")));
 
-		} catch (IOException | InterruptedException e) {
-			LOG.error("发送消息出现问题：" + e.getLocalizedMessage(), e);
+			// 当有结果以后，会自动调用下面的语句
+			future.thenAccept(response -> {
+				LOG.trace("POST方式发送信息给微信公众号服务器返回的结果：\n{}", response.body());
+			});
 		}
-	}
 }
