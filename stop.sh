@@ -15,3 +15,7 @@ mvn  spring-boot:stop
 # 启动菜单管理模块
 cd ../self_menu
 mvn  spring-boot:stop
+
+# 启动菜单管理模块
+cd ../library
+mvn  spring-boot:stop
